@@ -40,7 +40,7 @@ There are couple of API's Designed to solve this challenge and to secure the sol
 
 Clone the repository: Run the following command to clone the repository to your local machine: 
 ```bash
-git clone https://github.com/mhsnrafi/checkout.git
+git clone https://github.com/mhsnrafi/greenbone-challenge.git
 
 ```
 
