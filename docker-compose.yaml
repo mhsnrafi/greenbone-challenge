@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+  admin-notification:
+      image: greenbone/exercise-admin-notification
+      networks:
+        - backend
+
+  database:
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    env_file:
+      - .env.local
+    restart: always
+    networks:
+      - backend
+
+  redis:
+    image: redis:alpine
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - '6379:6379'
+    env_file:
+      - .env.local
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - 'redis_data:/data'
+
+volumes:
+  postgres_data:
+  redis_data:
+    driver: local
+networks:
+  backend:

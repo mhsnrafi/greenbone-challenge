@@ -1,0 +1,292 @@
+definitions:
+  models.AuthRequest:
+    properties:
+      email:
+        type: string
+    type: object
+  models.Computer:
+    type: object
+  models.ComputerRequest:
+    properties:
+      computer_name:
+        type: string
+      description:
+        type: string
+      employee_abbrev:
+        type: string
+      ip_address:
+        type: string
+      mac_address:
+        type: string
+    type: object
+  models.EmployeeRequest:
+    properties:
+      abbreviation:
+        type: string
+      computers:
+        items:
+          $ref: '#/definitions/models.ComputerRequest'
+        type: array
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+    type: object
+  models.RefreshRequest:
+    properties:
+      email:
+        type: string
+      token:
+        type: string
+    type: object
+  models.Response:
+    properties:
+      data:
+        additionalProperties: {}
+        type: object
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /access:
+    post:
+      consumes:
+      - application/json
+      description: Generate new access tokens for the provided email.
+      parameters:
+      - description: Auth Request
+        in: body
+        name: authReq
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Generate new access tokens.
+      tags:
+      - Tokens
+  /computers:
+    get:
+      consumes:
+      - application/json
+      description: Fetch all computers and their details
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            type: Bad
+      summary: Fetch all computers
+      tags:
+      - Computers
+    post:
+      consumes:
+      - application/json
+      description: Create a new computer with the given details
+      parameters:
+      - description: Computer details
+        in: body
+        name: computerReq
+        required: true
+        schema:
+          $ref: '#/definitions/models.Computer'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            type: Bad
+      summary: Create a new computer
+      tags:
+      - Computers
+  /computers/{computer_id}/assign/{employee_abbrev}:
+    put:
+      consumes:
+      - application/json
+      description: Update an existing computer with the given ID and employee abbreviation
+      parameters:
+      - description: Computer ID to update
+        in: path
+        name: computer_id
+        required: true
+        type: integer
+      - description: Employee abbreviation to assign computer to
+        in: path
+        name: employee_abbrev
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            type: Bad
+      summary: Update an existing computer
+      tags:
+      - Computers
+  /computers{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a computer with the given ID
+      parameters:
+      - description: Computer ID
+        in: query
+        name: computer_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            type: Bad
+      summary: Get a computer by ID
+      tags:
+      - Computers
+  /employees:
+    post:
+      consumes:
+      - application/json
+      description: Create a new employee with the given details
+      parameters:
+      - description: Employee details
+        in: body
+        name: emp
+        required: true
+        schema:
+          $ref: '#/definitions/models.EmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a new employee
+      tags:
+      - Employees
+  /employees/{employee_abbrev}/computers:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all computers assigned to an employee with the given employee
+        abbreviation
+      parameters:
+      - description: Employee abbreviation
+        in: query
+        name: employee_abbrev
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Retrieve all computers assigned to an employee
+      tags:
+      - Computers
+  /employees/{employee_abbrev}/computers/{computer_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a computer assigned to an employee with the given computer
+        ID and employee abbreviation
+      parameters:
+      - description: Computer ID to delete
+        in: query
+        name: computer_id
+        required: true
+        type: integer
+      - description: Employee abbreviation
+        in: query
+        name: employee_abbrev
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Delete a computer assigned to an employee
+      tags:
+      - Computers
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      description: Handle the request for token refresh by validating the refresh
+        token, generating new access and refresh tokens and returning the response.
+      parameters:
+      - description: Refresh Request
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Handle the request for token refresh.
+      tags:
+      - Tokens
+swagger: "2.0"
