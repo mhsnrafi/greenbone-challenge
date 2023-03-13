@@ -1,12 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"github.com/spf13/cast"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"greenbone-task/constants"
 	"greenbone-task/models"
 	db "greenbone-task/models/db"
 	"greenbone-task/services"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -109,4 +114,39 @@ func TestAssignComputerToEmployee(t *testing.T) {
 	err = services.DeleteComputer(cast.ToInt64(testComputer.ID))
 	require.NoError(t, err)
 
+}
+
+func TestNotifySystemAdministrator(t *testing.T) {
+	// Set up test case
+	employeeAbbreviation := "JDOE"
+	message := "Warning: Disk space is running low"
+	ns := services.NewNotificationService()
+
+	// Mock HTTP server
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Assert that request was made with correct body
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			t.Errorf("Error reading request body: %v", err)
+			return
+		}
+		expectedBody := fmt.Sprintf(`{"employeeAbbreviation":"%s","level":"warning","message":"%s"}`, employeeAbbreviation, message)
+		if string(body) != expectedBody {
+			t.Errorf("Unexpected request body. Expected: %s, Got: %s", expectedBody, string(body))
+		}
+
+		// Return a successful response
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, `{"status":"success"}`)
+	}))
+	defer ts.Close()
+
+	// Set the NOTIFICATION_URL to the mock server URL
+	ts.URL = constants.NOTIFICATION_URL
+
+	// Call the method being tested
+	err := ns.NotifySystemAdministrator(employeeAbbreviation, message)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
 }

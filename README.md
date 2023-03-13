@@ -61,6 +61,9 @@ Call the "Generate access token" endpoint to obtain an access token, which is re
 
 ### Use the API: 
 The Postman collection is attached for easy use of the API.
+```json
+Greenbone.postman_collection.json
+```
 
 
 ### Endpoints
@@ -140,93 +143,82 @@ This endpoint used refresh the access token
 
 
 
-#### Create Computer #1
-```json
-{
-   "mac_address": "12:34:56:78:90:ab",
-   "computer_name": "Alice's Laptop",
-   "ip_address": "192.168.1.103",
-   "employee_abbrev": "JDE",
-   "description": "MacBook Air"
-}
-```
 
 #### Create Computer #1
 ```json
 {
-   "mac_address": "12:34:56:78:90:ab",
-   "computer_name": "Alice's Laptop",
-   "ip_address": "192.168.1.103",
-   "employee_abbrev": "JDE",
-   "description": "MacBook Air"
-}
-```
-
-#### Create Computer #1
-```json
-{
-   "mac_address": "12:34:56:78:90:ab",
-   "computer_name": "Alice's Laptop",
-   "ip_address": "192.168.1.103",
-   "employee_abbrev": "JDE",
-   "description": "MacBook Air"
+  "mac_address": "12:34:56:78:90:ab",
+  "computer_name": "John's Laptop",
+  "ip_address": "192.168.1.103",
+  "employee_abbrev": "JDE",
+  "description": "MacBook Air"
 }
 ```
 
 #### Create Computer #2
 ```json
 {
-   "mac_address": "55:44:33:22:11:00",
-   "computer_name": "David's Desktop",
-   "ip_address": "192.168.1.107",
-   "employee_abbrev": "DLL",
-   "description": "Custom-built PC"
+  "mac_address": "11:22:33:44:55:66",
+  "computer_name": "John's  Desktop",
+  "ip_address": "192.168.1.104",
+  "employee_abbrev": "JDE",
+  "description": "HP EliteDesk"
 }
 ```
 
 #### Create Computer #3
 ```json
- {
-   "mac_address": "ff:ee:dd:cc:bb:aa",
-   "computer_name": "Alice's Test Computer",
-   "ip_address": "192.168.1.105",
-   "employee_abbrev": "JDE",
-   "description": "Virtual machine"
+{
+  "mac_address": "ff:ee:dd:cc:bb:aa",
+  "computer_name": "John's  Test Computer",
+  "ip_address": "192.168.1.105",
+  "employee_abbrev": "JDE",
+  "description": "Virtual machine"
 }
 ```
 
 #### Create Computer #4
 ```json
 {
-   "mac_address": "12:34:56:78:90:ab",
-   "computer_name": "Alice's Laptop",
-   "ip_address": "192.168.1.103",
-   "employee_abbrev": "JDE",
-   "description": "MacBook Air"
+  "mac_address": "aa:bb:cc:dd:ee:ff",
+  "computer_name": "Alice's Desktop",
+  "ip_address": "192.168.1.102",
+  "employee_abbrev": "AJK",
+  "description": "Custom-built PC"
 }
 ```
 
 #### Create Computer #5
 ```json
- {
-   "mac_address": "aa:bb:cc:dd:ee:ff",
-   "computer_name": "Alice's Desktop",
-   "ip_address": "192.168.1.102",
-   "employee_abbrev": "AJK",
-   "description": "Custom-built PC"
+{
+  "mac_address": "aa:bb:cc:dd:ee:ff",
+  "computer_name": "Alice's Desktop",
+  "ip_address": "192.168.1.102",
+  "employee_abbrev": "AJK",
+  "description": "Custom-built PC"
 }
 ```
-
 
 
 #### Create Computer #6
 ```json
 {
-   "mac_address": "01:23:45:67:89:ab",
-   "computer_name": "Bob's Computer",
-   "ip_address": "192.168.1.100",
-   "employee_abbrev": "BSS",
-   "description": "MacBook Pro"
+  "mac_address": "00:11:22:33:44:55",
+  "computer_name": "David's Laptop",
+  "ip_address": "192.168.1.106",
+  "employee_abbrev": "DLL",
+  "description": "Lenovo ThinkPad"
+}
+```
+
+#### Create Computer #7
+```json
+{
+  "mac_address": "55:44:33:22:11:00",
+  "computer_name": "David's Desktop",
+  "ip_address": "192.168.1.107",
+  "employee_abbrev": "DLL",
+  "description": "Custom-built PC"
 }
 ```
 
@@ -241,3 +233,12 @@ To test the API endpoints directly from the documentation, making it easier to e
 ```bash
 http://localhost:8080/swagger/index.html#/
 ```
+
+
+## Improvement Area
+Instead of send warning notification to system admin on a docker service, we need to be utilize messaging service like RabbitMQ can provide better reliability and scalability for sending notifications, as it allows for asynchronous message passing and can handle a large volume of messages. However, it also adds complexity to the system, as you need to set up and manage a RabbitMQ server and potentially write additional code to handle messaging
+
+On the other hand, sending notifications directly to the Docker service may be simpler and more straightforward, as it doesn't require any additional infrastructure or code. However, it may be less scalable and reliable, as the Docker service may not be able to handle a large volume of requests or may be more prone to failure
+
+This the area where we need some improvement to make a bettle reliable and scalable system. if we expect a high volume of notifications or need a high level of reliability, using a messaging service like RabbitMQ may be the better option. If we expect a low to moderate volume of notifications and simplicity is a priority, sending notifications directly to the Docker service may be sufficient.
+

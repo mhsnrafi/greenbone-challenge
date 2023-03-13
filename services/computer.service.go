@@ -66,6 +66,7 @@ func CreateComputer(computer db.Computer) (uint, error) {
 	return computer.ID, nil
 }
 
+// GetAllComputers fetch all computers information
 func GetAllComputers() ([]db.Computer, error) {
 	var computers []db.Computer
 	err := DbConnection.Find(&computers).Error

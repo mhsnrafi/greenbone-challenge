@@ -31,6 +31,7 @@ func CreateEmployee(employee models.EmployeeRequest) error {
 	return nil
 }
 
+// DeleteEmployeeComputer delete specific employee computer
 func DeleteEmployeeComputer(computerID int64, abbrev string) error {
 	err := DbConnection.Delete(&db.Computer{}, computerID, abbrev).Error
 	if err != nil {
@@ -39,6 +40,7 @@ func DeleteEmployeeComputer(computerID int64, abbrev string) error {
 	return nil
 }
 
+// FindComputersByEmployeeAbbrev fidn the computers from the database using abbrev
 func FindComputersByEmployeeAbbrev(abbrev string) ([]db.Computer, error) {
 	// check cache first
 	cacheKey := fmt.Sprintf("computers_by_employee_%s", abbrev)
